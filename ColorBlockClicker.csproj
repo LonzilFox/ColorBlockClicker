@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>ColorBlockClicker</AssemblyName>
+    <RootNamespace>ColorBlockClicker</RootNamespace>
+    <Version>0.0.2</Version>
+    <FileVersion>0.0.2.0</FileVersion>
+    <AssemblyVersion>0.0.2.0</AssemblyVersion>
+  </PropertyGroup>
+</Project>
