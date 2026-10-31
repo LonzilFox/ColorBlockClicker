@@ -7,7 +7,7 @@ internal static class UiTheme
     internal static readonly Color Window = Color.FromArgb(18, 21, 27);
     internal static readonly Color TitleBar = Color.FromArgb(22, 26, 33);
     internal static readonly Color Card = Color.FromArgb(29, 34, 43);
-    internal static readonly Color CardBorder = Color.FromArgb(48, 56, 69);
+    internal static readonly Color CardBorder = Color.FromArgb(67, 77, 92);
     internal static readonly Color Text = Color.FromArgb(236, 240, 246);
     internal static readonly Color MutedText = Color.FromArgb(151, 161, 177);
     internal static readonly Color Accent = Color.FromArgb(72, 215, 165);
@@ -21,6 +21,17 @@ internal static class UiTheme
     internal static readonly Color Running = Color.FromArgb(72, 215, 165);
     internal static readonly Color Idle = Color.FromArgb(126, 136, 151);
     internal static readonly Color Warning = Color.FromArgb(239, 193, 92);
+}
+
+// Provides flicker-free painting for the viewport and measured content host.
+internal sealed class SmoothPanel : Panel
+{
+    public SmoothPanel()
+    {
+        DoubleBuffered = true;
+        SetStyle(ControlStyles.AllPaintingInWmPaint |
+                 ControlStyles.OptimizedDoubleBuffer, true);
+    }
 }
 
 internal sealed class RoundedPanel : Panel
@@ -40,9 +51,9 @@ internal sealed class RoundedPanel : Panel
     protected override void OnPaint(PaintEventArgs e)
     {
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-        Rectangle rect = ClientRectangle;
-        rect.Width -= 1;
-        rect.Height -= 1;
+        // Inset the *entire* stroke: drawing at y=0 clips the upper half of
+        // the antialiased top border, which made the first card look covered.
+        Rectangle rect = new(2, 2, Width - 4, Height - 4);
         if (rect.Width <= 0 || rect.Height <= 0)
         {
             return;
@@ -50,7 +61,7 @@ internal sealed class RoundedPanel : Panel
 
         using GraphicsPath path = CreateRoundedPath(rect, CornerRadius);
         using var fill = new SolidBrush(FillColor);
-        using var border = new Pen(BorderColor, 1F);
+        using var border = new Pen(BorderColor, 1.5F);
         e.Graphics.FillPath(fill, path);
         e.Graphics.DrawPath(border, path);
     }
@@ -193,6 +204,10 @@ internal sealed class ModernButton : Button
 internal sealed class MetricView : Panel
 {
     private readonly Label _valueLabel;
+    private readonly Label _captionLabel;
+
+    public int PreferredMetricHeight => Math.Max(55,
+        _captionLabel.Font.Height + _valueLabel.Font.Height + 12);
 
     public MetricView(string caption)
     {
@@ -201,14 +216,14 @@ internal sealed class MetricView : Panel
         Padding = new Padding(2, 0, 2, 0);
         Height = 55;
 
-        var captionLabel = new Label
+        _captionLabel = new Label
         {
             Text = caption,
             ForeColor = UiTheme.MutedText,
             Font = new Font("Microsoft YaHei UI", 8.5F, FontStyle.Regular, GraphicsUnit.Point),
             AutoSize = false,
             Dock = DockStyle.Top,
-            Height = 22,
+            Height = Math.Max(22, Font.Height + 3),
             TextAlign = ContentAlignment.BottomCenter
         };
 
@@ -223,12 +238,13 @@ internal sealed class MetricView : Panel
         };
 
         Controls.Add(_valueLabel);
-        Controls.Add(captionLabel);
+        Controls.Add(_captionLabel);
+        _captionLabel.Height = Math.Max(22, _captionLabel.Font.Height + 4);
     }
 
     public void SetValue(string value)
     {
-        _valueLabel.Text = value;
+        if (_valueLabel.Text != value) _valueLabel.Text = value;
     }
 }
 
@@ -241,6 +257,7 @@ internal sealed class StatusDot : Control
         get => _dotColor;
         set
         {
+            if (_dotColor == value) return;
             _dotColor = value;
             Invalidate();
         }

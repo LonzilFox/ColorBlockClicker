@@ -5,8 +5,20 @@ namespace ColorBlockClicker;
 internal static class NativeMethods
 {
     internal const int WM_HOTKEY = 0x0312;
+    internal const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+    internal const int DWMWCP_ROUND = 2;
+    internal const int WM_NCHITTEST = 0x0084;
     internal const int WM_NCLBUTTONDOWN = 0x00A1;
+    internal const int HT_CLIENT = 0x0001;
     internal const int HT_CAPTION = 0x0002;
+    internal const int HT_LEFT = 0x000A;
+    internal const int HT_RIGHT = 0x000B;
+    internal const int HT_TOP = 0x000C;
+    internal const int HT_TOPLEFT = 0x000D;
+    internal const int HT_TOPRIGHT = 0x000E;
+    internal const int HT_BOTTOM = 0x000F;
+    internal const int HT_BOTTOMLEFT = 0x0010;
+    internal const int HT_BOTTOMRIGHT = 0x0011;
     internal const uint MOD_NOREPEAT = 0x4000;
     internal const uint VK_F8 = 0x77;
 
@@ -17,6 +29,17 @@ internal static class NativeMethods
 
     internal const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
     internal const uint MOUSEEVENTF_LEFTUP = 0x0004;
+
+    [DllImport("dwmapi.dll", PreserveSig = true)]
+    private static extern int DwmSetWindowAttribute(
+        IntPtr hwnd, int attribute, ref int value, int valueSize);
+
+    internal static void SetDwmRoundedCorners(IntPtr hwnd)
+    {
+        int preference = DWMWCP_ROUND;
+        _ = DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE,
+            ref preference, sizeof(int));
+    }
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]

@@ -12,7 +12,7 @@ if errorlevel 1 (
 
 if exist publish rmdir /s /q publish
 
-echo Building ColorBlockClicker v0.0.2...
+echo Building ColorBlockClicker v0.0.3...
 dotnet publish ColorBlockClicker.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o publish
 if errorlevel 1 (
   echo.

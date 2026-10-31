@@ -1,63 +1,38 @@
 # ColorBlockClicker
 
-一个用于**快速识别并点击网格中唯一异色色块**的 Windows 辅助工具。
+ColorBlockClicker is a lightweight Windows utility that detects and automatically clicks the one differently colored tile in a grid. It continuously adapts as the grid grows, without requiring a fixed tile count.
 
-支持从 `2×2` 开始自动识别逐渐增大的方格网格，无需固定网格尺寸。工具只分析用户框选的屏幕区域，并模拟普通鼠标左键点击。
+## Features
 
-## 功能
+- Detects the grid size automatically, starting with a 2 x 2 grid.
+- Identifies the differently colored tile and performs rapid mouse clicks.
+- Captures only the area you select on screen.
+- Start and stop controls, plus an `F8` global toggle hotkey.
+- Adjustable maximum grid size (up to 60 x 60).
+- Optional high-speed scanning mode.
+- Always-on-top dark floating window with collapse and expand controls.
+- Resizable interface with responsive controls and high-DPI scaling.
+- Displays the detected grid size, click count, color confidence, and grid confidence.
+- Saves the selected screen region and scanning preferences locally.
 
-- 自动识别当前 `N×N` 网格尺寸
-- 自动定位唯一颜色不同的色块
-- 低延迟连续识别与点击
-- 开始 / 停止按钮
-- `F8` 全局开始 / 停止
-- 自定义框选识别区域
-- 悬浮窗置顶，可收起 / 展开
-- DPI 自适应，兼容高分辨率与 Windows 显示缩放
-- 自动保存上次框选区域和设置
+## Usage
 
-## 使用
+1. Launch `ColorBlockClicker.exe`.
+2. Click the **leftmost region-selection button** and drag a rectangle around the full tile grid. Do not include scores, timers, or other surrounding content.
+3. Click the **middle start button** or press `F8` to begin detection and clicking.
+4. Click the **rightmost stop button** or press `F8` again to stop.
+5. Select the region again if the game's grid position or size changes substantially.
 
-1. 启动 `ColorBlockClicker.exe`。
-2. 点击 **框选区域**，只框住完整的色块方阵。
-3. 点击 **开始**，或按 `F8`。
-4. 再次按 `F8` 或点击 **停止**即可停止。
+You can resize the window from its edges or corners, or drag the lower-right resize grip. The arrow in the title bar collapses or expands the floating window.
 
-> 网页缩放、窗口位置或色块区域发生明显变化后，重新框选一次即可。
+## Build
 
-## 构建
+**Requirements:** Windows 10 or 11 and the .NET 8 SDK.
 
-环境：Windows 10 / 11、.NET 8 SDK。
+Run `build_release.bat` to create a Windows x64 release executable in `publish/`. The release script attempts a self-contained, single-file build first.
 
-直接运行：
+Run `run_dev.bat` to launch the project from source with the .NET SDK.
 
-```bat
-build_release.bat
-```
+## Implementation
 
-构建完成后程序位于：
-
-```text
-publish\ColorBlockClicker.exe
-```
-
-开发运行：
-
-```bat
-run_dev.bat
-```
-
-## 技术实现
-
-- C# / .NET 8 / WinForms
-- GDI `BitBlt` 区域截屏
-- 直接像素采样与颜色离群检测
-- Win32 鼠标输入与全局热键
-
-## 版本
-
-当前版本：`v0.0.2`
-
-版本序列按以下方式递增：
-
-`v0.0.1 → v0.0.2 → ... → v0.0.9 → v0.1.0`
+Built with C#, .NET 8, and Windows Forms. Screen capture uses Windows GDI `BitBlt`, followed by direct pixel sampling and color outlier detection. Mouse clicks and the global hotkey use Win32 APIs. No OCR or online service is required.
